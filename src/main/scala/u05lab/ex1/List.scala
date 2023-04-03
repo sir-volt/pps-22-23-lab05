@@ -58,15 +58,30 @@ enum List[A]:
 
   def reverse(): List[A] = foldLeft[List[A]](Nil())((l, e) => e :: l)
 
+  def pos(el: A)(start: Int): Option[Int] = this match
+    case h :: t if get(start).get == el => Some(start)
+    case h :: t => t.pos(el)(start + 1)
+    case _ => None
+
   /** EXERCISES */
-  def zipRight: List[(A, Int)] = ???
+  def zipRight: List[(A, Int)] =
+    def makeTuples(elements: List[A])(n: Int): List[(A, Int)] = elements match
+      case h :: t => (h, n) :: makeTuples(t)(n + 1)
+      case _ => Nil()
+    makeTuples(this)(0)
 
-  def partition(pred: A => Boolean): (List[A], List[A]) = ???
+  def partition(pred: A => Boolean): (List[A], List[A]) = (filter(pred), filter(a => !pred(a)))
 
-  def span(pred: A => Boolean): (List[A], List[A]) = ???
+  def span(pred: A => Boolean): (List[A], List[A]) =
+    def getFirstPart(list: List[A])(pred: A => Boolean): List[A] = list match
+      case h :: t if pred(h) => h :: getFirstPart(t)(pred)
+      case _ => Nil()
+    (getFirstPart(this)(pred), filter(el => getFirstPart(this)(pred)))
 
   /** @throws UnsupportedOperationException if the list is empty */
-  def reduce(op: (A, A) => A): A = ???
+  def reduce(op: (A, A) => A): A = this match
+    case h :: t => foldLeft()
+    case h :: Nil() =>
 
   def takeRight(n: Int): List[A] = ???
 
