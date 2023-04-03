@@ -76,14 +76,21 @@ enum List[A]:
     def getFirstPart(list: List[A])(pred: A => Boolean): List[A] = list match
       case h :: t if pred(h) => h :: getFirstPart(t)(pred)
       case _ => Nil()
-    (getFirstPart(this)(pred), filter(el => getFirstPart(this)(pred)))
+    (getFirstPart(this)(pred), takeRight(getFirstPart(this)(pred).length))
 
   /** @throws UnsupportedOperationException if the list is empty */
-  def reduce(op: (A, A) => A): A = this match
-    case h :: t => foldLeft()
-    case h :: Nil() =>
+  def reduce(op: (A, A) => A): A =
+    if(!this.isEmpty) then
+      this.tail.get.foldLeft(this.head.get)(op)
+    else
+      throw UnsupportedOperationException()
 
-  def takeRight(n: Int): List[A] = ???
+  def takeRight(n: Int): List[A] = this match
+    case _ :: t if(length > n) => t.takeRight(n)
+    case h :: t => h :: t
+    case _ => Nil()
+
+
 
 // Factories
 object List:
