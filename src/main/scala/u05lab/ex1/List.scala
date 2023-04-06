@@ -76,7 +76,7 @@ enum List[A]:
     def getFirstPart(list: List[A])(pred: A => Boolean): List[A] = list match
       case h :: t if pred(h) => h :: getFirstPart(t)(pred)
       case _ => Nil()
-    (getFirstPart(this)(pred), takeRight(getFirstPart(this)(pred).length))
+    (getFirstPart(this)(pred), takeRight(this.length - getFirstPart(this)(pred).length))
 
   /** @throws UnsupportedOperationException if the list is empty */
   def reduce(op: (A, A) => A): A =
@@ -90,6 +90,8 @@ enum List[A]:
     case h :: t => h :: t
     case _ => Nil()
 
+  def collect[B](function: PartialFunction[A, B]): List[B] =
+    this.filter(el => function.isDefinedAt(el)).map(x => function(x))
 
 
 // Factories
