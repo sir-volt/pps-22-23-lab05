@@ -22,11 +22,10 @@ trait ConferenceReviewing:
   def averageFinalScore(article: Int): Double
 
   def acceptedArticles(): Set[Int]
-  /*
 
   def sortedAcceptedArticles(): List[(Int, Double)]
 
-  def averageWeightedFinalScoreMap(): Map[Int, Double]*/
+  def averageWeightedFinalScoreMap(): collection.immutable.Map[Int, Double]
 
 object ConferenceReviewing:
   def apply(): ConferenceReviewing =
@@ -59,10 +58,20 @@ private class ConferenceReviewingImpl extends ConferenceReviewing:
     averageFinalScore(article) >= 5.0 && reviews.filter(el => el._1 == article).flatMap(el => el._2)
       .exists(el => el._1 == Question.Relevance && el._2 >= 8)
 
-
   override def acceptedArticles(): Set[Int] =
-    var els = reviews.map(el => el._1).distinct.filter(el => this.accepted(el))
-    els.toSet
+    reviews.map(el => el._1).distinct.filter(el => this.accepted(el)).toSet
+
+  override def sortedAcceptedArticles(): List[(Int, Double)] =
+    this.acceptedArticles().map(el => (el, this.averageFinalScore(el))).toList
+      .sortWith((el1, el2) => el1._2 < el2._2)
+
+  def averageWeightedFinalScore(article: Int): Double =
+    val els = reviews.filter(el => el._1 == article).map(el => el._2(Question.Final) * el._2(Question.Confidence) / 10.0)
+    els.sum / els.size
+
+  override def averageWeightedFinalScoreMap(): collection.immutable.Map[Int, Double] =
+    reviews.map(el => el._1).distinct.map(el => (el, this.averageWeightedFinalScore(el))).toMap
+
 
 
 

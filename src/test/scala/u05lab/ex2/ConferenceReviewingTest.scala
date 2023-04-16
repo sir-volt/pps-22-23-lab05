@@ -52,17 +52,13 @@ class ConferenceReviewingTest:
 
     @Test
     def testOrderedScores(): Unit =
-      // l'articolo 2 ha preso su RELEVANCE i due voti 4,9
       assertEquals(cr.orderedScores(2)(Question.Relevance), List(4,9));
-      // e simile per gli altri
       assertEquals(cr.orderedScores(4)(Question.Confidence), List(6,7,8));
       assertEquals(cr.orderedScores(5)(Question.Final), List(10,10));
 
     @Test
     def testAverageFinalScore(): Unit =
-      // l'articolo 1 ha preso voto medio su FINAL pari a 8.5, con scarto massimo 0.01
       assertEquals(cr.averageFinalScore(1),8.5,0.01);
-      // e simile per gli altri
       assertEquals(cr.averageFinalScore(2),7.5,0.01);
       assertEquals(cr.averageFinalScore(3),3.5,0.01);
       assertEquals(cr.averageFinalScore(4),7.0,0.01);
@@ -70,23 +66,17 @@ class ConferenceReviewingTest:
 
     @Test
     def testAcceptedArticles(): Unit =
-      // solo gli articoli 1,2,4 vanno accettati, avendo media finale >=5 e almeno un voto su RELEVANCE >= 8
       assertEquals(cr.acceptedArticles(),Set(1,2,4));
 
-    /*
     @Test
     def testSortedAcceptedArticles(): Unit =
-      // articoli accettati, e loro voto finale medio
-      assertEquals(cr.sortedAcceptedArticles(),Arrays.asList(new Pair<>(4,7.0),new Pair<>(2,7.5),new Pair<>(1,8.5)));
+      assertEquals(cr.sortedAcceptedArticles(), List((4,7.0), (2,7.5), (1,8.5)));
 
     @Test
     def optionalTestAverageWeightedFinalScore(): Unit =
-      // l'articolo 1 ha media pesata finale pari a (4.8+5.4)/2 = 5,1, con scarto massimo 0.01
-      assertEquals(cr.averageWeightedFinalScoreMap().get(1),(4.8+5.4)/2,0.01);
-      // e simile per gli altri
-      assertEquals(cr.averageWeightedFinalScoreMap().get(2),(9.0+6.0)/2,0.01);
-      assertEquals(cr.averageWeightedFinalScoreMap().get(3),(0.9+1.6)/2,0.01);
-      assertEquals(cr.averageWeightedFinalScoreMap().get(4),(3.6+5.6+5.6)/3,0.01);
-      assertEquals(cr.averageWeightedFinalScoreMap().get(5),(6.0+7.0)/2,0.01);
-      assertEquals(cr.averageWeightedFinalScoreMap().size(),5);
-    */
+      assertEquals(cr.averageWeightedFinalScoreMap()(1), 5.1, 0.01);
+      assertEquals(cr.averageWeightedFinalScoreMap()(2),7.5,0.01);
+      assertEquals(cr.averageWeightedFinalScoreMap()(3),1.25,0.01);
+      assertEquals(cr.averageWeightedFinalScoreMap()(4),4.93,0.01);
+      assertEquals(cr.averageWeightedFinalScoreMap()(5),6.5,0.01);
+      assertEquals(cr.averageWeightedFinalScoreMap().size,5);
